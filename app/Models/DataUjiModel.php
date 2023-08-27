@@ -227,4 +227,13 @@ class DataUjiModel extends Model
             'cekData' => !empty($paginate),
         ];
     }
+
+    public function getDataSeleksi($id)
+    {
+        return $this->select('prodi.*,data_uji.*,data_peserta.no_pendaftaran,data_peserta.nama_siswa, 
+        data_peserta.ranking, data_peserta.akumulasi, data_peserta.keterangan, data_peserta.nama_sekolah')
+            ->join('data_peserta', 'data_peserta.id_peserta=data_uji.id_peserta')
+            ->join('prodi', 'prodi.id_prodi=data_uji.id_prodi')
+            ->where('data_uji.id', $id)->first();
+    }
 }

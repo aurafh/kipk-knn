@@ -201,6 +201,7 @@ class Periode extends BaseController
         $periode = $session->get('selectedPeriode');
         $tahun = $this->periode->where('periode', $periode)->first();
         $id_periode = $tahun['id_periode'];
+        //jika terdapat nilai null pada data pendaftar ketika diprediksi
         $test = $this->seleksiModel->getPeriode($id_periode);
         foreach ($test as $value) {
             $id = $value->id;
@@ -235,21 +236,42 @@ class Periode extends BaseController
             }
         }
 
+        //normalisasi data
+        $data = $this->training->getAll();
+        $prodi_min = min(array_column($data, 'nilai_atribut_prodi'));
+        $prodi_max = max(array_column($data, 'nilai_atribut_prodi'));
+        $sekolah_max = max(array_column($data, 'nilai_atribut'));
+        $sekolah_min = min(array_column($data, 'nilai_atribut'));
+        $seleksi_min = min(array_column($data, 'skor_nilai_seleksi'));
+        $seleksi_max = max(array_column($data, 'skor_nilai_seleksi'));
+        $ekonomi_max = max(array_column($data, 'skor_nilai_kondisi_ekonomi'));
+        $ekonomi_min = min(array_column($data, 'skor_nilai_kondisi_ekonomi'));
+        $wawancara_min = min(array_column($data, 'skor_nilai_wawancara'));
+        $wawancara_max = max(array_column($data, 'skor_nilai_wawancara'));
+        $survey_max = max(array_column($data, 'skor_nilai_hasil_survey'));
+        $survey_min = min(array_column($data, 'skor_nilai_hasil_survey'));
+        $akademik_min = min(array_column($data, 'skor_prestasi_akademik'));
+        $akademik_max = max(array_column($data, 'skor_prestasi_akademik'));
+        $non_max = max(array_column($data, 'skor_nilai_prestasi_non_akademik'));
+        $non_min = min(array_column($data, 'skor_nilai_prestasi_non_akademik'));
+
         $nilai_uji = $this->seleksiModel->getPeriode($id_periode);
         foreach ($nilai_uji as $key => $uji) {
             $id = $uji->id;
             $no_pendaftaran = $uji->no_pendaftaran;
             $nama_siswa = $uji->nama_siswa;
-            $nilai_atribut_prodi = $uji->nilai_atribut_prodi;
-            $nilai_atribut = $uji->nilai_atribut;
-            $skor_nilai_seleksi = $uji->skor_nilai_seleksi;
-            $skor_nilai_kondisi_ekonomi = $uji->skor_nilai_kondisi_ekonomi;
-            $skor_nilai_wawancara = $uji->skor_nilai_wawancara;
-            $skor_nilai_hasil_survey = $uji->skor_nilai_hasil_survey;
-            $skor_prestasi_akademik = $uji->skor_prestasi_akademik;
-            $skor_nilai_prestasi_non_akademik = $uji->skor_nilai_prestasi_non_akademik;
+            $nilai_atribut_prodi = ($uji->nilai_atribut_prodi - $prodi_min <= 0) ? 0 : round((($uji->nilai_atribut_prodi - $prodi_min) / ($prodi_max - $prodi_min)) * (1 - 0) + 0, 3);
+            $nilai_atribut = ($uji->nilai_atribut - $sekolah_min <= 0) ? 0 : round((($uji->nilai_atribut - $sekolah_min) / ($sekolah_max - $sekolah_min)) * (1 - 0) + 0, 3);
+            $skor_nilai_seleksi = ($uji->skor_nilai_seleksi - $seleksi_min <= 0) ? 0 : round((($uji->skor_nilai_seleksi - $seleksi_min) / (($uji->skor_nilai_seleksi >= $seleksi_max) ? ($uji->skor_nilai_seleksi - $seleksi_min) : ($seleksi_max - $seleksi_min))) * (1 - 0) + 0, 3);
+            $skor_nilai_kondisi_ekonomi = ($uji->skor_nilai_kondisi_ekonomi - $ekonomi_min <= 0) ? 0 : round((($uji->skor_nilai_kondisi_ekonomi - $ekonomi_min) / (($uji->skor_nilai_kondisi_ekonomi >= $ekonomi_max) ? ($uji->skor_nilai_kondisi_ekonomi - $ekonomi_min) : ($ekonomi_max - $ekonomi_min))) * (1 - 0) + 0, 3);
+            $skor_nilai_wawancara = ($uji->skor_nilai_wawancara - $wawancara_min <= 0) ? 0 : round((($uji->skor_nilai_wawancara - $wawancara_min) / (($uji->skor_nilai_wawancara >= $wawancara_max) ? ($uji->skor_nilai_wawancara - $wawancara_min) : ($wawancara_max - $wawancara_min))) * (1 - 0) + 0, 3);
+            $skor_nilai_hasil_survey = ($uji->skor_nilai_hasil_survey - $survey_min <= 0) ? 0 : round((($uji->skor_nilai_hasil_survey - $survey_min) / (($uji->skor_nilai_hasil_survey >= $survey_max) ? ($uji->skor_nilai_hasil_survey - $survey_min) : ($survey_max - $survey_min))) * (1 - 0) + 0, 3);
+            $skor_prestasi_akademik = ($uji->skor_prestasi_akademik - $akademik_min <= 0) ? 0 : round((($uji->skor_prestasi_akademik - $akademik_min) / (($uji->skor_prestasi_akademik >= $akademik_max) ? ($uji->skor_prestasi_akademik - $akademik_min) : ($akademik_max - $akademik_min))) * (1 - 0) + 0, 3);
+            $skor_nilai_prestasi_non_akademik = ($uji->skor_nilai_prestasi_non_akademik - $non_min <= 0) ? 0 : round((($uji->skor_nilai_prestasi_non_akademik - $non_min) / (($uji->skor_nilai_prestasi_non_akademik >= $non_max) ? ($uji->skor_nilai_prestasi_non_akademik - $non_min) : ($non_max - $non_min))) * (1 - 0) + 0, 3);
 
             $testData = [
+                'no_pendaftaran' => $no_pendaftaran,
+                'nama_siswa' => $nama_siswa,
                 'pilihan_program_studi' => $nilai_atribut_prodi,
                 'asal_sekolah' => $nilai_atribut,
                 'skor_nilai_seleksi' => $skor_nilai_seleksi,
@@ -259,31 +281,70 @@ class Periode extends BaseController
                 'skor_nilai_prestasi_non_akademik' => $skor_nilai_prestasi_non_akademik,
                 'skor_nilai_hasil_survey' => $skor_nilai_hasil_survey
             ];
+
+            $cek = $this->testingNorm->where($testData)->first();
+            if ($cek == null) {
+                $this->testingNorm->save($testData);
+            }
+
             $k = 3;
-            $neighbors = $this->training->Distance($testData, $k);
+            $neighbors = $this->trainNorm->Distance($testData, $k);
             $labelCounts = array_count_values(array_column($neighbors, 'label'));
             $dominantLabel = array_search(max($labelCounts), $labelCounts);
 
             //update label di database
-            $this->seleksiModel->where(['id' => $id])->set(['label' => $dominantLabel])->update();
+            $domLabel = ($dominantLabel == '1') ? 'Layak' : 'Tidak Layak';
+            $this->seleksiModel->where(['id' => $id])->set(['label' => $domLabel])->update();
+            $this->testingNorm->where($testData)->set(['label' => $dominantLabel])->update();
             $sekolah = $this->sekolah->where('nilai_atribut', $uji->nilai_atribut)->first();
             $prodi = $this->prodi->where('nilai_atribut_prodi', $uji->nilai_atribut_prodi)->first();
 
             $id_sekolah = $sekolah['id_sekolah'];
             $id_prodi = $prodi['id_prodi'];
-            $this->training->save([
-                'no_pendaftaran' => $no_pendaftaran,
-                'nama_siswa' => $nama_siswa,
+            $check = $this->training->where([
+                'no_pendaftaran' => $uji->no_pendaftaran,
+                'nama_siswa' => $uji->nama_siswa,
                 'id_prodi' => $id_prodi,
                 'id_sekolah' => $id_sekolah,
-                'skor_nilai_seleksi' => $skor_nilai_seleksi,
-                'skor_nilai_wawancara' => $skor_nilai_wawancara,
-                'skor_nilai_kondisi_ekonomi' => $skor_nilai_kondisi_ekonomi,
-                'skor_prestasi_akademik' => $skor_prestasi_akademik,
-                'skor_nilai_prestasi_non_akademik' => $skor_nilai_prestasi_non_akademik,
-                'skor_nilai_hasil_survey' => $skor_nilai_hasil_survey,
-                'label' => $dominantLabel
-            ]);
+                'skor_nilai_seleksi' => $uji->skor_nilai_seleksi,
+                'skor_nilai_wawancara' => $uji->skor_nilai_wawancara,
+                'skor_nilai_kondisi_ekonomi' => $uji->skor_nilai_kondisi_ekonomi,
+                'skor_prestasi_akademik' => $uji->skor_prestasi_akademik,
+                'skor_nilai_prestasi_non_akademik' => $uji->skor_nilai_prestasi_non_akademik,
+                'skor_nilai_hasil_survey' => $uji->skor_nilai_hasil_survey,
+            ])->first();
+            if ($check == null) {
+                $this->training->save([
+                    'no_pendaftaran' => $uji->no_pendaftaran,
+                    'nama_siswa' => $uji->nama_siswa,
+                    'id_prodi' => $id_prodi,
+                    'id_sekolah' => $id_sekolah,
+                    'skor_nilai_seleksi' => $uji->skor_nilai_seleksi,
+                    'skor_nilai_wawancara' => $uji->skor_nilai_wawancara,
+                    'skor_nilai_kondisi_ekonomi' => $uji->skor_nilai_kondisi_ekonomi,
+                    'skor_prestasi_akademik' => $uji->skor_prestasi_akademik,
+                    'skor_nilai_prestasi_non_akademik' => $uji->skor_nilai_prestasi_non_akademik,
+                    'skor_nilai_hasil_survey' => $uji->skor_nilai_hasil_survey,
+                    'label' => $domLabel
+                ]);
+            }
+
+            $dataTrain = $this->trainNorm->where($testData)->first();
+            if ($dataTrain == null) {
+                $this->trainNorm->save([
+                    'no_pendaftaran' => $no_pendaftaran,
+                    'nama_siswa' => $nama_siswa,
+                    'pilihan_program_studi' => $nilai_atribut_prodi,
+                    'asal_sekolah' => $nilai_atribut,
+                    'skor_nilai_seleksi' => $skor_nilai_seleksi,
+                    'skor_nilai_wawancara' => $skor_nilai_wawancara,
+                    'skor_nilai_kondisi_ekonomi' => $skor_nilai_kondisi_ekonomi,
+                    'skor_prestasi_akademik' => $skor_prestasi_akademik,
+                    'skor_nilai_prestasi_non_akademik' => $skor_nilai_prestasi_non_akademik,
+                    'skor_nilai_hasil_survey' => $skor_nilai_hasil_survey,
+                    'label' => $dominantLabel
+                ]);
+            }
         }
         session()->setFlashdata('pesan', 'Data berhasil diprediksi!');
         return redirect()->to('hasil-prediksi-' . $periode);

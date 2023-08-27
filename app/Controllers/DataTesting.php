@@ -350,19 +350,8 @@ class DataTesting extends BaseController
             if ($cek == null) {
                 $this->testNorm->save($saveNorm);
             }
-            $testData = [
-                'pilihan_program_studi' => $nilai_atribut_prodi,
-                'asal_sekolah' => $nilai_atribut,
-                'skor_nilai_seleksi' => $skor_nilai_seleksi,
-                'skor_nilai_wawancara' => $skor_nilai_wawancara,
-                'skor_nilai_kondisi_ekonomi' => $skor_nilai_kondisi_ekonomi,
-                'skor_prestasi_akademik' => $skor_prestasi_akademik,
-                'skor_nilai_prestasi_non_akademik' => $skor_nilai_prestasi_non_akademik,
-                'skor_nilai_hasil_survey' => $skor_nilai_hasil_survey
-            ];
-
             $k = 3;
-            $neighbors = $this->normalized->Distance($testData, $k);
+            $neighbors = $this->normalized->Distance($saveNorm, $k);
             $labelCounts = array_count_values(array_column($neighbors, 'label'));
             $dominantLabel = array_search(max($labelCounts), $labelCounts);
             // dd($dominantLabel);
@@ -422,80 +411,7 @@ class DataTesting extends BaseController
             }
         }
 
-        // $newTrain = $this->trainingModel->getAll();
-        // $prodi_min = min(array_column($newTrain, 'nilai_atribut_prodi'));
-        // $prodi_max = max(array_column($newTrain, 'nilai_atribut_prodi'));
-        // $sekolah_max = max(array_column($newTrain, 'nilai_atribut'));
-        // $sekolah_min = min(array_column($newTrain, 'nilai_atribut'));
-        // $seleksi_min = min(array_column($newTrain, 'skor_nilai_seleksi'));
-        // $seleksi_max = max(array_column($newTrain, 'skor_nilai_seleksi'));
-        // $ekonomi_max = max(array_column($newTrain, 'skor_nilai_kondisi_ekonomi'));
-        // $ekonomi_min = min(array_column($newTrain, 'skor_nilai_kondisi_ekonomi'));
-        // $wawancara_min = min(array_column($newTrain, 'skor_nilai_wawancara'));
-        // $wawancara_max = max(array_column($newTrain, 'skor_nilai_wawancara'));
-        // $survey_max = max(array_column($newTrain, 'skor_nilai_hasil_survey'));
-        // $survey_min = min(array_column($newTrain, 'skor_nilai_hasil_survey'));
-        // $akademik_min = min(array_column($newTrain, 'skor_prestasi_akademik'));
-        // $akademik_max = max(array_column($newTrain, 'skor_prestasi_akademik'));
-        // $non_max = max(array_column($newTrain, 'skor_nilai_prestasi_non_akademik'));
-        // $non_min = min(array_column($newTrain, 'skor_nilai_prestasi_non_akademik'));
-
-        // foreach ($newTrain as $key => $row) {
-        //     $no = $row->no_pendaftaran;
-        //     $nama = $row->nama_siswa;
-        //     $nilai_prodi = ($row->nilai_atribut_prodi - $prodi_min != 0) ? round((($row->nilai_atribut_prodi - $prodi_min) / ($prodi_max - $prodi_min)) * (1 - 0) + 0, 3) : 0;
-        //     $nilai_sekolah = ($row->nilai_atribut - $sekolah_min != 0) ? round((($row->nilai_atribut - $sekolah_min) / ($sekolah_max - $sekolah_min)) * (1 - 0) + 0, 3) : 0;
-        //     $seleksi = ($row->skor_nilai_seleksi - $seleksi_min != 0) ? round((($row->skor_nilai_seleksi - $seleksi_min) / ($seleksi_max - $seleksi_min)) * (1 - 0) + 0, 3) : 0;
-        //     $ekonomi = ($row->skor_nilai_kondisi_ekonomi - $ekonomi_min != 0) ? round((($row->skor_nilai_kondisi_ekonomi - $ekonomi_min) / ($ekonomi_max - $ekonomi_min)) * (1 - 0) + 0, 3) : 0;
-        //     $wawancara = ($row->skor_nilai_wawancara - $wawancara_min != 0) ? round((($row->skor_nilai_wawancara - $wawancara_min) / ($wawancara_max - $wawancara_min)) * (1 - 0) + 0, 3) : 0;
-        //     $survey = ($row->skor_nilai_hasil_survey - $survey_min != 0) ? round((($row->skor_nilai_hasil_survey - $survey_min) / ($survey_max - $survey_min)) * (1 - 0) + 0, 3) : 0;
-        //     $akademik = ($row->skor_prestasi_akademik - $akademik_min != 0) ? round((($row->skor_prestasi_akademik - $akademik_min) / ($akademik_max - $akademik_min)) * (1 - 0) + 0, 3) : 0;
-        //     $non = ($row->skor_nilai_prestasi_non_akademik - $non_min != 0) ? round((($row->skor_nilai_prestasi_non_akademik - $non_min) / ($non_max - $non_min)) * (1 - 0) + 0, 3) : 0;
-        //     $output = ($row->label == 'Tidak Layak') ? '0' : '1';
-
-        //     $train = [
-        //         'no_pendaftaran' => $no,
-        //         'nama_siswa' => $nama,
-        //         'pilihan_program_studi' => $nilai_prodi,
-        //         'asal_sekolah' => $nilai_sekolah,
-        //         'skor_nilai_seleksi' => $seleksi,
-        //         'skor_nilai_wawancara' => $wawancara,
-        //         'skor_nilai_kondisi_ekonomi' => $ekonomi,
-        //         'skor_prestasi_akademik' => $akademik,
-        //         'skor_nilai_prestasi_non_akademik' => $non,
-        //         'skor_nilai_hasil_survey' => $survey,
-        //         'label' => $output
-        //     ];
-        //     $normTrain = $this->normalized->where([
-        //         'no_pendaftaran' => $no,
-        //         'nama_siswa' => $nama,
-        //         'pilihan_program_studi' => $nilai_prodi,
-        //         'asal_sekolah' => $nilai_sekolah,
-        //         'skor_nilai_wawancara' => $wawancara,
-        //         'skor_prestasi_akademik' => $akademik,
-        //         'skor_nilai_prestasi_non_akademik' => $non,
-        //         'skor_nilai_hasil_survey' => $survey,
-        //         'label' => $output
-        //     ])->first();
-        //     if ($normTrain) {
-        //         $this->normalized->where([
-        //             'no_pendaftaran' => $no,
-        //             'nama_siswa' => $nama,
-        //             'pilihan_program_studi' => $nilai_prodi,
-        //             'asal_sekolah' => $nilai_sekolah,
-        //             'skor_nilai_wawancara' => $wawancara,
-        //             'skor_prestasi_akademik' => $akademik,
-        //             'skor_nilai_prestasi_non_akademik' => $non,
-        //             'skor_nilai_hasil_survey' => $survey,
-        //             'label' => $output
-        //         ])->set([
-        //             'skor_nilai_seleksi' => $skor_nilai_seleksi,
-        //             'skor_nilai_kondisi_ekonomi' => $skor_nilai_kondisi_ekonomi,
-        //         ])->update();
-        //     } else {
-        //         $this->normalized->save($train);
-        //     }
-
+        // 
         session()->setFlashdata('pesan', "Data berhasil diprediksi");
         return redirect()->to('data-testing');
     }

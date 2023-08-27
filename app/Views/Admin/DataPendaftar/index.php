@@ -11,6 +11,7 @@
                         <label for="periode">Periode</label>
                         <select name="periode" id="periode" class="form-control form-control-sm">
                             <?php foreach ($tahun as $thn) : ?>
+                                <option value="">Semua</option>
                                 <option value="<?= $thn['id_periode']; ?>"><?= $thn['periode']; ?></option>
                             <?php endforeach; ?>
                         </select>

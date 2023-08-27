@@ -52,12 +52,10 @@ class TrainingNormalized extends Model
                 'label' => $train['label']
             ];
         }
-        // dd($distances);
         usort($distances, function ($a, $b) {
             return $a['distance'] <=> $b['distance'];
         });
         $neighbors = array_slice($distances, 0, $k, true);
-        // dd($neighbors);
         return $neighbors;
     }
 

@@ -18,31 +18,21 @@
                     </div>
                 <?php endif; ?>
                 <div class="card-body">
-                    <h4 class="card-title">Edit Data Admin</h4>
+                    <h4 class="card-title">Edit Akun User</h4>
                     <p class="card-description">
-                        Masukkan data baru!
+                        Ubah akun anda!
                     </p>
                     <div class="form-group">
                         <input type="hidden" name="id" value="<?= $user['id']; ?>">
                         <label for="username">Username</label>
                         <input type="text" class="form-control form-control-sm" name="username" id="username" value="<?= $user['username']; ?>">
                     </div>
-                    <div class=" form-group">
-                        <label for="password">Password</label>
-                        <input type="password" class="form-control form-control-sm" name="password" id="password" value="<?= $user['password']; ?>">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 grid-margin stretch-card mt-2">
-            <div class="card">
-                <div class="card-body">
                     <div class="form-group">
                         <label for="password_lama">Password Lama</label>
                         <input type="password" class="form-control form-control-sm" name="password_lama" placeholder="Password Lama" id="password_lama">
                     </div>
                     <div class="form-group">
-                        <label for="password_baru">Pssword Baru</label>
+                        <label for="password_baru">Password Baru</label>
                         <input type="password" class="form-control form-control-sm" name="password_baru" placeholder="Password Baru" id="password_baru">
                     </div>
                     <button type="submit" class="btn btn-primary me-2">Update Data</button>
@@ -50,7 +40,7 @@
                 </div>
             </div>
         </div>
-    </div>
+        <!-- </div> -->
 
 </form>
 <?= $this->endSection(); ?>

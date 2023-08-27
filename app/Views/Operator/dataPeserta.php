@@ -69,7 +69,7 @@
                     </table>
                 </div>
                 <div class="float-left mt-4">
-                    <i>Showing <?= 1 + (5 * ($page - 1)) ?> to <?= $no - 1 ?> of <?= $pager->getTotal() ?> entries</i>
+                    <i>Showing <?= $pager->getTotal() ?> entries</i>
                 </div>
                 <div class="float-right mt-3">
                     <?= $pager->links('default', 'paginate'); ?>

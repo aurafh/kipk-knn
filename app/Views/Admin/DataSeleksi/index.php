@@ -12,7 +12,7 @@
                         <label for="periode">Periode</label>
                         <select name="periode" id="periode" class="form-control form-control-sm">
                             <?php foreach ($tahun as $thn) : ?>
-                                <option value="">Periode</option>
+                                <option value="">Semua</option>
                                 <option value="<?= $thn['id_periode']; ?>" <?= ($request->getVar('periode') == $thn['id_periode']) ? 'selected' : $thn['id_periode']; ?>><?= $thn['periode']; ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -42,7 +42,7 @@
         <div class=" card-body">
             <div class="row">
                 <div class="col-6">
-                    <h4 class="card-title">DATA SELEKSI KIP-KUIAH</h4>
+                    <h4 class="card-title">DATA SELEKSI KIP-KULIAH</h4>
                     <p class="card-description">
                         Seluruh data pendaftar yang telah diseleksi dengan label prediksi
                     </p>
@@ -92,8 +92,8 @@
                                 <td><?= $uji['ranking']; ?></td>
                                 <td><?= $uji['keterangan']; ?></td>
                                 <td>
-                                    <a href="data-pendaftar-edit-<?= $uji['id']; ?>" class="btn btn-warning btn-sm"><i class="ti-pencil"></i></a>
-                                    <form action="data-pendaftar-<?= $uji['id']; ?>" method="post" class="d-inline" id="form-delete">
+                                    <a href="data-seleksi-edit-<?= $uji['id']; ?>" class="btn btn-warning btn-sm"><i class="ti-pencil"></i></a>
+                                    <form action="data-seleksi-<?= $uji['id']; ?>" method="post" class="d-inline" id="form-delete">
                                         <?= csrf_field(); ?>
                                         <input type="hidden" name="_method" value="DELETE">
                                         <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Apakah anda ingin mengahpus data ini?');" form="form-delete" formaction="data-pendaftar-<?= $uji['id']; ?>"><i class=" icon-trash"></i></button>
@@ -105,7 +105,7 @@
                 </table>
             </div>
             <div class="float-left mt-4">
-                <i>Showing <?= 1 + (5 * ($page - 1)) ?> to <?= $no - 1 ?> of <?= $pager->getTotal() ?> entries</i>
+                <i>Showing <?= $pager->getTotal() ?> entries</i>
             </div>
             <div class="float-right mt-3">
                 <?= $pager->links('default', 'paginate'); ?>

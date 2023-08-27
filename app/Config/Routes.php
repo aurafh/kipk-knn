@@ -35,11 +35,19 @@ $routes->post('login', 'Login::login');
 $routes->get('logout', 'Login::logout');
 $routes->get('register', 'Peserta::index');
 $routes->post('register', 'Peserta::save');
+$routes->get('data-diri', 'Peserta::data');
+$routes->post('data-diri-(:num)', 'Peserta::EditData/$1');
+$routes->get('data-pendaftar-edit-(:num)', 'Peserta::dataPendaftar/$1');
+$routes->post('data-pendaftar-(:num)', 'Peserta::EditPendaftar/$1');
+$routes->delete('data-pendaftar-(:num)', 'Prodi::deletePendaftar/$1');
+$routes->get('data-seleksi-edit-(:num)', 'Peserta::dataSeleksi/$1');
+$routes->post('data-seleksi-(:num)', 'Peserta::EditSeleksi/$1');
+$routes->delete('data-seleksi-(:num)', 'Prodi::deleteSeleksi/$1');
+
 
 $routes->get('data-profile-(:num)', 'Login::edit/$1');
 $routes->post('edit-profile', 'Login::update');
 $routes->get('dashboard', 'Dashboard::index');
-
 $routes->get('data-prodi', 'Prodi::index');
 $routes->get('data-prodi-tambah', 'Prodi::create');
 $routes->get('data-prodi-order', 'Prodi::orderBy');
@@ -48,6 +56,7 @@ $routes->get('data-prodi-edit-(:num)', 'Prodi::edit/$1');
 $routes->post('data-prodi-update-(:num)', 'Prodi::update/$1');
 $routes->delete('data-prodi-(:num)', 'Prodi::delete/$1');
 $routes->delete('data-prodi-multiple', 'Prodi::delete_multiple');
+
 
 $routes->get('data-sekolah', 'Sekolah::index');
 $routes->get('data-sekolah-tambah', 'Sekolah::create');
