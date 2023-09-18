@@ -457,32 +457,32 @@ class Periode extends BaseController
         session()->setFlashdata('pesan', 'Data hasil prediksi berhasil disimpan!');
         return redirect()->to('keputusan-' . $periode);
     }
-    public function DataKIP($periode)
-    {
-        $dompdf = new Dompdf();
-        $session = session();
-        $periode = $session->get('selectedPeriode');
-        $tahun = $this->periode->where('periode', $periode)->first();
-        $id_periode = $tahun['id_periode'];
-        $dataPDF = $this->pesertaModel->getPDF($id_periode);
-        $data['dataPDF'] = $dataPDF;
-        $html = view('Operator/laporan', $data);
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'landscape');
-        $dompdf->render();
-        // $dompdf->stream();
-        $dompdf->stream('dataKIPK' . $periode . '.pdf', array('Attachment' => false));
-    }
-    public function contoh($periode)
-    {
-        $session = session();
-        $periode = $session->get('selectedPeriode');
-        $tahun = $this->periode->where('periode', $periode)->first();
-        $id_periode = $tahun['id_periode'];
-        $dataPDF = $this->seleksiModel->getPDF($id_periode);
-        $data['dataPDF'] = $dataPDF;
-        return view('Operator/laporan', $data);
-    }
+    // public function DataKIP($periode)
+    // {
+    //     $dompdf = new Dompdf();
+    //     $session = session();
+    //     $periode = $session->get('selectedPeriode');
+    //     $tahun = $this->periode->where('periode', $periode)->first();
+    //     $id_periode = $tahun['id_periode'];
+    //     $dataPDF = $this->pesertaModel->getPDF($id_periode);
+    //     $data['dataPDF'] = $dataPDF;
+    //     $html = view('Operator/laporan', $data);
+    //     $dompdf->loadHtml($html);
+    //     $dompdf->setPaper('A4', 'landscape');
+    //     $dompdf->render();
+    //     // $dompdf->stream();
+    //     $dompdf->stream('dataKIPK' . $periode . '.pdf', array('Attachment' => false));
+    // }
+    // public function contoh($periode)
+    // {
+    //     $session = session();
+    //     $periode = $session->get('selectedPeriode');
+    //     $tahun = $this->periode->where('periode', $periode)->first();
+    //     $id_periode = $tahun['id_periode'];
+    //     $dataPDF = $this->seleksiModel->getPDF($id_periode);
+    //     $data['dataPDF'] = $dataPDF;
+    //     return view('Operator/laporan', $data);
+    // }
     public function keputusan()
     {
         $session = session();
@@ -508,7 +508,7 @@ class Periode extends BaseController
         $sheet = $excel->getActiveSheet();
         $sheet->setCellValue('A1', 'DATA CALON MAHASISWA KIP-KULIAH');
         $sheet->setCellValue('A2', 'INSTITUT TEKNOLOGI GARUT');
-        $sheet->setCellValue('A3', 'PERIODE' . $periode);
+        $sheet->setCellValue('A3', 'PERIODE ' . $periode);
         $sheet->setCellValue('A5', 'Nomor');
         $sheet->setCellValue('B5', 'Nomor Pendaftaran');
         $sheet->setCellValue('C5', 'Nama Lengkap');
@@ -555,5 +555,135 @@ class Periode extends BaseController
         header('Cache-Control: max-age=0');
         $writer->save('php://output');
         exit();
+    }
+
+    //export data seleksi
+    public function ekspor($periode)
+    {
+        $session = session();
+        $periode = $session->get('selectedPeriode');
+        $tahun = $this->periode->where('periode', $periode)->first();
+        $id_periode = $tahun['id_periode'];
+        $keputusan = $this->seleksiModel->seleksiExp($id_periode);
+        $excel = new Spreadsheet();
+        $sheet = $excel->getActiveSheet();
+        $sheet->setCellValue('A1', 'Nomor Pendaftaran');
+        $sheet->setCellValue('B1', 'Nama Lengkap');
+        $sheet->setCellValue('C1', 'Asal Sekolah');
+        $sheet->setCellValue('D1', 'Program Studi');
+        $sheet->setCellValue('E1', 'TPA');
+        $sheet->setCellValue('F1', 'Wawancara');
+        $sheet->setCellValue('G1', 'Ekonomi');
+        $sheet->setCellValue('H1', 'Survey');
+        $sheet->setCellValue('I1', 'Prestasi Akademik');
+        $sheet->setCellValue('J1', 'Non Akademik');
+
+        $col = 6;
+        foreach ($keputusan as $key => $data) {
+            $sheet->setCellValue('A' . $col, $data['no_pendaftaran']);
+            $sheet->setCellValue('B' . $col, $data['nama_siswa']);
+            $sheet->setCellValue('C' . $col, $data['nama_sekolah']);
+            $sheet->setCellValue('D' . $col, $data['nama_prodi']);
+            $sheet->setCellValue('E' . $col, $data['skor_nilai_seleksi']);
+            $sheet->setCellValue('F' . $col, $data['skor_nilai_wawancara']);
+            $sheet->setCellValue('G' . $col, $data['skor_nilai_kondisi_ekonomi']);
+            $sheet->setCellValue('H' . $col, $data['skor_nilai_hasil_survey']);
+            $sheet->setCellValue('I' . $col, $data['skor_prestasi_akademik']);
+            $sheet->setCellValue('J' . $col, $data['skor_nilai_prestasi_non_akademik']);
+            $col++;
+        }
+        $sheet->getStyle('A1:J1')->getFont()->setBold(true);
+        $styeArray = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['argb', '00000000'],
+                ],
+            ],
+        ];
+        $sheet->getStyle('A1:J' . ($col - 1))->applyFromArray($styeArray);
+
+        $sheet->getColumnDimension('A')->setAutoSize(true);
+        $sheet->getColumnDimension('B')->setAutoSize(true);
+        $sheet->getColumnDimension('C')->setAutoSize(true);
+        $sheet->getColumnDimension('D')->setAutoSize(true);
+        $sheet->getColumnDimension('E')->setAutoSize(true);
+        $sheet->getColumnDimension('F')->setAutoSize(true);
+        $sheet->getColumnDimension('G')->setAutoSize(true);
+        $sheet->getColumnDimension('H')->setAutoSize(true);
+        $sheet->getColumnDimension('I')->setAutoSize(true);
+        $sheet->getColumnDimension('J')->setAutoSize(true);
+
+        $writer = new Xlsx($excel);
+        $filename = 'seleksiKIPK.xlsx';
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attechment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        $writer->save('php://output');
+        exit();
+    }
+    public function import()
+    {
+        return view('Operator/import');
+    }
+
+    public function upload()
+    {
+        $session = session();
+        $periode = $session->get('selectedPeriode');
+        $validation = \Config\Services::validation();
+        $valid = $this->validate(
+            [
+                'importfile' => [
+                    'rules' => 'uploaded[importfile]|ext_in[importfile,xls,xlsx,csv]',
+                    'error' => [
+                        'uploaded' => '{field} harus diisi',
+                        'ext_in' => '{field} harus memiliki extention xls, xlsx atau csv'
+                    ]
+                ]
+            ]
+        );
+        if (!$valid) {
+            session()->setFlashdata('error', $validation->getError('importfile'));
+            return redirect()->back();
+        } else {
+            $file_excel = $this->request->getFile('importfile');
+            $ext = $file_excel->getClientExtension();
+            if ($ext == 'xls') {
+                $render = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+            } elseif ($ext == 'xlsx') {
+                $render = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+            } else {
+                $render = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
+            }
+            $excel = $render->load($file_excel);
+            $data = $excel->getActiveSheet()->toArray();
+            foreach ($data as $x => $row) {
+                if ($x == 0) {
+                    continue;
+                }
+                $no_pendaftaran = $row[0];
+                $skor_nilai_seleksi = round(($row[4] === '0') ? 0 : $row[4], 2);
+                $skor_nilai_wawancara = round(($row[5] === '0') ? 0 :  $row[5], 2);
+                $skor_nilai_kondisi_ekonomi = round(($row[6] === '0') ? 0 : $row[6], 2);
+                $skor_nilai_hasil_survey =  round(($row[7] === '0') ? 0 : $row[7], 2);
+                $skor_prestasi_akademik =  round(($row[8] === '0') ? 0 : $row[8], 2);
+                $skor_nilai_prestasi_non_akademik = round(($row[9] === '0') ? 0 :  $row[9], 2);
+
+                $seleksi = $this->pesertaModel->where('no_pendaftaran', $no_pendaftaran)->first();
+                if ($seleksi) {
+                    $this->seleksiModel->where('id_peserta', $seleksi['id_peserta'])->set([
+                        'skor_nilai_seleksi' => $skor_nilai_seleksi,
+                        'skor_nilai_wawancara' => $skor_nilai_wawancara,
+                        'skor_nilai_kondisi_ekonomi' => $skor_nilai_kondisi_ekonomi,
+                        'skor_prestasi_akademik' => $skor_prestasi_akademik,
+                        'skor_nilai_prestasi_non_akademik' => $skor_nilai_prestasi_non_akademik,
+                        'skor_nilai_hasil_survey' => $skor_nilai_hasil_survey
+                    ])->update();
+                }
+            }
+            session()->setFlashdata('pesan', 'Data seleksi sudah diubah!');
+            return redirect()->to('data-seleksi-' . $periode);
+        }
     }
 }

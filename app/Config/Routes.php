@@ -120,7 +120,9 @@ $routes->get('prediksi-edit-(:num)', 'Periode::edit_prediksi/$1');
 $routes->post('prediksi-update-(:num)', 'Periode::update_prediksi/$1');
 $routes->get('simpan-prediksi-(:any)', 'Periode::simpan_prediksi/$1');
 $routes->get('laporan-prediksi-(:any)', 'Periode::export/$1');
-$routes->get('laporan-contoh-(:any)', 'Periode::contoh/$1');
+$routes->get('seleksi-export-(:any)', 'Periode::ekspor/$1');
+$routes->get('seleksi-import-(:any)', 'Periode::import/$1');
+$routes->post('seleksi-upload', 'Periode::upload');
 
 
 

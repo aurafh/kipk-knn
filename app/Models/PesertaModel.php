@@ -34,6 +34,17 @@ class PesertaModel extends Model
             ->where('data_peserta.id_periode =', $periode)
             ->where('status', 'VALIDATE')->findAll();
     }
+    public function getPDF($periode)
+    {
+        return $this->join('prodi', 'prodi.id_prodi=data_peserta.id_prodi')
+            ->join('periode', 'periode.id_periode=data_peserta.id_periode')
+            ->join('asal_sekolah', 'asal_sekolah.id_sekolah=data_peserta.id_sekolah')
+            ->where('data_peserta.id_periode =', $periode)
+            ->where('status', 'VALIDATE')
+            ->where('label =', 'Layak')
+            ->where('ranking !=', null)
+            ->findAll();
+    }
     public function getHasil($periode, $search, $num)
     {
         $builder = $this->builder();
@@ -90,5 +101,9 @@ class PesertaModel extends Model
             'pager' => $pager,
             'cekData' => !empty($paginate),
         ];
+    }
+    public function getNilai($no)
+    {
+        return $this->where('no_pendaftaran =', $no)->find();
     }
 }

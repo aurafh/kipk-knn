@@ -13,6 +13,12 @@
         </div>
     </div>
 <?php else : ?>
+    <div class="col-6 mb-3">
+        <?php $session = session();
+        $periode = $session->get('selectedPeriode'); ?>
+        <a href="seleksi-import-<?= $periode; ?>" class="btn btn-outline-primary btn-md">Import</a>
+        <a href="seleksi-export-<?= $periode; ?>" class="btn btn-primary btn-md">Export</a>
+    </div>
     <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
             <?php if (session()->getFlashdata('pesan')) : ?>
@@ -34,8 +40,6 @@
                         </p>
                     </div>
                     <div class="col-6">
-                        <?php $session = session();
-                        $periode = $session->get('selectedPeriode'); ?>
                         <a href="peserta-prediksi-<?= $periode; ?>" class="btn btn-outline-success btn-md float-right" onclick="return confirm('Apakah anda yakin data sudah lengkap dan akan memprediksi data ini?');">PREDIKSI DATA</a>
                     </div>
                 </div>

@@ -14,6 +14,14 @@ class DataUjiModel extends Model
         'skor_nilai_hasil_survey', 'skor_prestasi_akademik', 'skor_nilai_prestasi_non_akademik', 'label', 'id_periode'
     ];
 
+    public function seleksiExp($periode)
+    {
+        return $this->join('data_peserta', 'data_peserta.id_peserta=data_uji.id_peserta')
+            ->join('prodi', 'prodi.id_prodi=data_uji.id_prodi')
+            ->join('asal_sekolah', 'asal_sekolah.id_sekolah=data_uji.id_sekolah')
+            ->where('data_uji.id_periode =', $periode)->findAll();
+    }
+
     public function getSeleksi($num, $periode)
     {
         $builder = $this->builder();
